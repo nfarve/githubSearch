@@ -2,6 +2,9 @@ import React from "react";
 import RepoList from './components/repoList';
 import SearchForm from './components/searchForm';
 import CommitList from './components/commitList';
+import Container from '@material-ui/core/Container';
+import Button from '@material-ui/core/Button';
+
 
 class App extends React.Component {
   constructor(props) {
@@ -17,7 +20,7 @@ class App extends React.Component {
 
   updateRepos = repos =>{
     this.setState({
-      repos: repos
+      repos
     })
   };
 
@@ -58,22 +61,21 @@ class App extends React.Component {
   };
 
   render() {
-  return (
-    <div className="App">
-      <h1>Github Search</h1>
-      <h2>{this.state.errorMessage}</h2>
-    {this.state.showRepos ? (
-      <RepoList orgName = {this.state.selectedOrgName} updateSelectedRepo = {this.updateSelectedRepo} hideRepos = {this.hideRepos} repos = {this.state.repos} />
-    ) : 
-      ( <CommitList orgName ={this.state.selectedOrgName} commit = {this.state.selectedRepo} /> )}
-    {this.state.showRepos ? (
-      <SearchForm updateRepos = {this.updateRepos} setError = {this.setError} updateSelectedOrgName = {this.updateSelectedOrgName} addRepo={this.addRepo}/>
-    ) : (<button onClick={this.showRepoList}>Back to Search</button>
-    )}
-    </div>
-
-  );
-
+    const {selectedOrgName, showRepos, repos, errorMessage, selectedRepo} = this.state
+    return (
+      <Container maxWidth="lg">
+        <h1>Github Search</h1>
+        <h2>{errorMessage}</h2>
+      {showRepos ? (
+        <SearchForm updateRepos = {this.updateRepos} setError = {this.setError} updateSelectedOrgName = {this.updateSelectedOrgName} addRepo={this.addRepo}/>
+      ) : (<Button variant="contained" color="primary" onClick={this.showRepoList}>Back to Search</Button>
+      )}
+      {showRepos ? (
+        <RepoList orgName = {selectedOrgName} updateSelectedRepo = {this.updateSelectedRepo} hideRepos = {this.hideRepos} repos = {repos} />
+      ) :
+        ( <CommitList orgName ={selectedOrgName} repoName = {selectedRepo} /> )}
+      </Container>
+    );
   }
 }
 
