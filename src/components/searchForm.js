@@ -54,7 +54,6 @@ SearchForm.propTypes = {
   updateSelectedOrgName: PropTypes.func.isRequired,
   repoPage: PropTypes.number,
   orgName: PropTypes.string,
-  nameInput: PropTypes.string,
   addRepo: PropTypes.func
 }
 

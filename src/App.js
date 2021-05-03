@@ -66,10 +66,6 @@ class App extends React.Component {
     });
   };
 
-  // getRepos = (state) => {
-  //   fetchRepos(state.repoName, state.repoPage);
-  // };
-
   render() {
     const {selectedOrgName, showRepos, repos, repoPage, errorMessage, selectedRepo} = this.state
 
