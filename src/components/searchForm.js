@@ -24,13 +24,12 @@ function SearchForm(props) {
   const fetchRepos = (repoName) => {
     fetch(`https://api.github.com/orgs/${repoName}/repos?page=${props.repoPage}`)
       .then(async(response) => await response.json()).then(jsonData => {
-        console.log(jsonData);
         if(Array.isArray(jsonData)) {
           props.addRepo(jsonData);
           setNameInput('');
         }
         else{
-          props.setError('No result, lets try something else');
+          props.setError("No result, let's try something else");
           props.updateRepos([]);
         }
       })
