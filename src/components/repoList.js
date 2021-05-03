@@ -23,36 +23,39 @@ Repo.propTypes = {
   showCommit: PropTypes.func.isRequired
 };
 
-class RepoList extends React.Component {
+function RepoList(props) {
 
-  render() {
-    return (
-      <TableContainer component={Paper}>
-        <Table size="small">
-          {this.props.orgName ? <caption>Search Results for {this.props.orgName}</caption> : null}
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Fork Count</TableCell>
-              <TableCell>Commit Link</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {this.props.repos.map(repo => (
-                <Repo showCommit={this.showCommit} repo={repo} key={repo.name} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    )
+  const showCommit = commit => {
+    props.hideRepos();
+    props.updateSelectedRepo(commit);
   }
 
-    showCommit = commit => {
-      this.props.hideRepos();
-      this.props.updateSelectedRepo(commit);
-      console.log(commit);
-    };
+  const updateRepoPage = () => {
+      props.updateRepoPage(props.repoPage + 1);
+  };
+
+
+  return (
+    <TableContainer component={Paper}>
+      <Table size="small">
+        {props.orgName ? <caption>Search Results for {props.orgName}</caption> : null}
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>Description</TableCell>
+            <TableCell>Fork Count</TableCell>
+            <TableCell>Commit Link</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {props.repos.map(repo => (
+              <Repo showCommit={showCommit} repo={repo} key={repo.name} />
+          ))}
+        </TableBody>
+      </Table>
+    <Button onClick = {() => updateRepoPage()} justify="space-between"> Show More</Button>
+    </TableContainer>
+  )
 }
 
 RepoList.propTypes = {
@@ -60,6 +63,8 @@ RepoList.propTypes = {
   hideRepos: PropTypes.func.isRequired,
   updateSelectedRepo: PropTypes.func.isRequired,
   repos: PropTypes.array.isRequired,
-  orgName: PropTypes.string.isRequired
+  repoPage: PropTypes.number.isRequired,
+  orgName: PropTypes.string.isRequired,
+  updateRepoPage: PropTypes.func.isRequired
 }
 export default RepoList;

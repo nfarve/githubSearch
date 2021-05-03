@@ -1,57 +1,62 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import PropTypes from 'prop-types';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
-class SearchForm extends React.Component {
-  constructor(props) {
-      super(props);
-      this.state = { nameInput: "" };
-  }
+function SearchForm(props) {
+  const [nameInput, setNameInput] = useState('');
 
-  render() {
-    return (
-      <form onSubmit={event => this.handleSubmit(event)}>
-        <TextField variant="outlined" placeholder="Github Org Name"  value={this.state.nameInput}
-  onChange={event => this.handleChange(event)} />
-        <Button color="primary" variant="contained" type="submit" value="Submit"> Submit </Button>
-      </form>
-    );
-  }
-
-  handleChange = event => {
-    this.setState({ nameInput: event.target.value });
+  const handleChange = event => {
+    setNameInput(event.target.value);
   };
 
-  handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault();
-    this.props.setError('');
-    fetch(`https://api.github.com/orgs/${this.state.nameInput}/repos`)
+    props.setError('');
+    props.updateRepos([]);
+    props.updateSelectedOrgName(nameInput);
+  };
+
+  useEffect(() => {
+    fetchRepos(props.orgName)
+  }, [props.repoPage, props.orgName]);
+
+  const fetchRepos = (repoName) => {
+    fetch(`https://api.github.com/orgs/${repoName}/repos?page=${props.repoPage}`)
       .then(async(response) => await response.json()).then(jsonData => {
+        console.log(jsonData);
         if(Array.isArray(jsonData)) {
-          this.props.updateRepos(jsonData.sort((a,b) => b.forks_count - a.forks_count));
-          this.props.updateSelectedOrgName(this.state.nameInput);
-          this.setState({
-            nameInput: ''
-          });
+          props.addRepo(jsonData);
+          setNameInput('');
         }
         else{
-          this.props.updateSelectedOrgName(this.state.nameInput);
-          this.props.setError('No result, lets try something else');
-          this.props.updateRepos([]);
+          props.setError('No result, lets try something else');
+          props.updateRepos([]);
         }
-
       })
       .catch(function (error) {
         console.log(error);
     });
-  };
+  }
+
+  return (
+    <form onSubmit={event => handleSubmit(event)}>
+      <TextField variant="outlined" placeholder="Github Org Name"  value={nameInput}
+onChange={event => handleChange(event)} />
+      <Button color="primary" variant="contained" type="submit" value="Submit"> Submit </Button>
+    </form>
+  );
+
 }
 
 SearchForm.propTypes = {
   setError: PropTypes.func.isRequired,
   updateRepos: PropTypes.func.isRequired,
-  updateSelectedOrgName: PropTypes.func.isRequired
+  updateSelectedOrgName: PropTypes.func.isRequired,
+  repoPage: PropTypes.number,
+  orgName: PropTypes.string,
+  nameInput: PropTypes.string,
+  addRepo: PropTypes.func
 }
 
 export default SearchForm;

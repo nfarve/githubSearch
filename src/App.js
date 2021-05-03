@@ -5,7 +5,6 @@ import CommitList from './components/commitList';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -15,6 +14,7 @@ class App extends React.Component {
       selectedRepo: '',
       selectedOrgName: '',
       errorMessage: '',
+      repoPage: 1,
     };
   }
 
@@ -26,7 +26,7 @@ class App extends React.Component {
 
   addRepo = repos => {
     this.setState(prevState => ({
-      repos: [...prevState.repos, ...repos],
+      repos: [...prevState.repos, ...repos].sort((a,b) => b.forks_count - a.forks_count),
     }));
   };
 
@@ -54,24 +54,35 @@ class App extends React.Component {
     });
   };
 
+  updateRepoPage = repoPage => {
+    this.setState({
+      repoPage
+    })
+  };
+
   setError = error => {
     this.setState({
       errorMessage: error
     });
   };
 
+  // getRepos = (state) => {
+  //   fetchRepos(state.repoName, state.repoPage);
+  // };
+
   render() {
-    const {selectedOrgName, showRepos, repos, errorMessage, selectedRepo} = this.state
+    const {selectedOrgName, showRepos, repos, repoPage, errorMessage, selectedRepo} = this.state
+
     return (
       <Container maxWidth="lg">
         <h1>Github Search</h1>
         <h2>{errorMessage}</h2>
       {showRepos ? (
-        <SearchForm updateRepos = {this.updateRepos} setError = {this.setError} updateSelectedOrgName = {this.updateSelectedOrgName} addRepo={this.addRepo}/>
+        <SearchForm orgName = {selectedOrgName} repoPage={repoPage} updateRepos = {this.updateRepos} setError = {this.setError} updateSelectedOrgName = {this.updateSelectedOrgName} addRepo={this.addRepo}/>
       ) : (<Button variant="contained" color="primary" onClick={this.showRepoList}>Back to Search</Button>
       )}
       {showRepos ? (
-        <RepoList orgName = {selectedOrgName} updateSelectedRepo = {this.updateSelectedRepo} hideRepos = {this.hideRepos} repos = {repos} />
+        <RepoList repoPage = {repoPage} orgName = {selectedOrgName} updateRepoPage = {this.updateRepoPage} updateSelectedRepo = {this.updateSelectedRepo} hideRepos = {this.hideRepos} repos = {repos} />
       ) :
         ( <CommitList orgName ={selectedOrgName} repoName = {selectedRepo} /> )}
       </Container>
