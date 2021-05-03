@@ -16,6 +16,7 @@
   },
   "engines": {
     "node": ">=14.0.0",
+    "npm": "6.x",
     "yarn": "1.x"
   },
   "scripts": {
@@ -44,7 +45,6 @@
     ]
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
     "eslint": "^7.25.0",
     "eslint-plugin-react": "^7.23.2",
     "prop-types": "^15.7.2"
